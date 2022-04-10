@@ -35,7 +35,8 @@ const ToneIndicators: Plugin = {
       ],
     
       execute: async function (args, message): Promise<void> {
-        const tone = args[0].value;
+        const rawtone = args[0].value;
+        const tone = rawtone.replace("/", "");
         const channel = message.channel;
         const tone_description = tones[tone] ?? "I don't know about that tone! Feel free to make a PR at https://github.com/beerpiss/enmity or yell at beerpsi#5270";
         sendReply(channel.id, `${tone}: ${tone_description}`)
