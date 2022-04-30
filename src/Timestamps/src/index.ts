@@ -1,13 +1,26 @@
+// SPDX-License-Identifier: 0BSD
 import { Plugin, registerPlugin } from "enmity-api/plugins";
-import { getModule } from "enmity-api/module";
+import { bulk, filters } from "enmity-api/modules";
 import { create } from "enmity-api/patcher";
 
-const MessagesModule = getModule(m => m.default?.sendMessage)
-const UploadsModule = getModule(m => m.default?.uploadLocalFiles)
-const TimeRegex = new RegExp("(?:0?\\d|1[0-2]):[0-5]\\d\\s*[ap]m|(?:[01]?\\d|2[0-3]):[0-5]\\d", "gi");
+interface Module {
+  [key: string]: any;
+}
 
+const [
+  MessagesModule,
+  UploadsModule,
+] = <Module[]> bulk(
+  filters.byProps("sendMessage"),
+  filters.byProps("uploadLocalFiles"),
+);
 
-// 12h time is such a massive L 
+const TimeRegex = new RegExp(
+  "(?:0?\\d|1[0-2]):[0-5]\\d\\s*[ap]m|(?:[01]?\\d|2[0-3]):[0-5]\\d",
+  "gi",
+);
+
+// 12h time is such a massive L
 // https://gist.github.com/apolopena/ad4af8bb58e2b1f18b1e0bb78143ebdc
 function convertTo24HourTime(time: string): string {
   const AMPM = time.slice(-2).toLowerCase();
@@ -29,7 +42,8 @@ function convertTo24HourTime(time: string): string {
 
 // https://github.com/SpoonMcForky/replace-timestamps-pc/blob/main/index.js#L15-L20
 function getUnixTimestamp(time: string): string {
-  const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').replace(/\d?\d:\d\d/, convertTo24HourTime(time).trim());
+  const date = new Date().toISOString().replace(/T/, " ").replace(/\..+/, "")
+    .replace(/\d?\d:\d\d/, convertTo24HourTime(time).trim());
   const then = Math.round((new Date(date)).getTime() / 1000);
   if (isNaN(then)) return time;
   return `<t:${then}:t>`; //To change the time format, refer to https://github.com/discord/discord-api-docs/blob/master/docs/Reference.md#timestamp-styles
@@ -41,25 +55,39 @@ const TimestampsPlugin: Plugin = {
 
   onStart() {
     const MessageTimestampPatcher = create("message-timestamp-patcher");
-    MessageTimestampPatcher.before(MessagesModule.default, "sendMessage", (_, args, __) => {
-      // channel ID: args[0]
-      if (args[1]["content"].search(TimeRegex) !== -1) {
-        args[1]["content"] =  args[1].content.replace(TimeRegex, (x: string) => getUnixTimestamp(x));
-      }
-    });
+    MessageTimestampPatcher.before(
+      MessagesModule,
+      "sendMessage",
+      (_, args, __) => {
+        // channel ID: args[0]
+        if (args[1]["content"].search(TimeRegex) !== -1) {
+          args[1]["content"] = args[1].content.replace(
+            TimeRegex,
+            (x: string) => getUnixTimestamp(x),
+          );
+        }
+      },
+    );
 
     const UploadTimestampPatcher = create("upload-timestamp-patcher");
-    UploadTimestampPatcher.before(UploadsModule.default, "uploadLocalFiles", (_, args, __) => {
-      // channel ID: args[0]["id"]
-      if (args[3]["content"].search(TimeRegex) !== -1) {
-        args[3]["content"] =  args[3].content.replace(TimeRegex, (x: string) => getUnixTimestamp(x));
-      }
-    });
+    UploadTimestampPatcher.before(
+      UploadsModule,
+      "uploadLocalFiles",
+      (_, args, __) => {
+        // channel ID: args[0]["id"]
+        if (args[3]["content"].search(TimeRegex) !== -1) {
+          args[3]["content"] = args[3].content.replace(
+            TimeRegex,
+            (x: string) => getUnixTimestamp(x),
+          );
+        }
+      },
+    );
   },
 
   onStop() {
     this.patches = [];
-  }
-}
+  },
+};
 
 registerPlugin(TimestampsPlugin);
