@@ -1,10 +1,16 @@
 import { sendReply } from "enmity-api/clyde";
-import { ApplicationCommandInputType, ApplicationCommandOptionType, ApplicationCommandType, Command, EnmitySectionID } from "enmity-api/commands";
+import {
+  ApplicationCommandInputType,
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+  Command,
+  EnmitySectionID,
+} from "enmity-api/commands";
 import { Plugin, registerPlugin } from "enmity-api/plugins";
 import { Image } from "enmity-api/react";
 import { get } from "enmity-api/rest";
 
-const nekos_life_img_types = [ 
+const nekos_life_img_types = [
   "tickle",
   "slap",
   "poke",
@@ -27,61 +33,18 @@ const nekos_life_img_types = [
   "goose",
   "gecg",
   "avatar",
-  "waifu"
+  "waifu",
 ];
-
-const nekos_life_nsfw_img_types = [
-  "Random_hentai_gif",
-  "pussy",
-  "nsfw_neko_gif",
-  "lewd",
-  "les",
-  "kuni",
-  "cum",
-  "classic",
-  "boobs",
-  "bj",
-  "anal",
-  "nsfw_avatar",
-  "yuri",
-  "trap",
-  "tits",
-  "solog",
-  "solo",
-  "pwankg",
-  "pussy_jpg",
-  "lewdkemo",
-  "lewdk",
-  "keta",
-  "hololewd",
-  "holoero",
-  "hentai",
-  "futanari",
-  "femdom",
-  "feetg",
-  "erofeet",
-  "feet",
-  "ero",
-  "erok",
-  "erokemo",
-  "eron",
-  "eroyuri",
-  "cum_jpg",
-  "blowjob",
-  "spank",
-  "gasm"
-]
 
 async function getImageSize(file: string): Promise<any> {
   return new Promise(
     (resolve, reject) => {
       Image.getSize(file, (width: number, height: number) => {
         resolve({ width, height });
-      }, 
-      (error) => {
+      }, (error) => {
         reject(error);
       });
-    }
+    },
   );
 }
 
@@ -99,10 +62,10 @@ const CatgirlsPlugin: Plugin = {
 
       description: "Sends an image from the nekos.life API.",
       displayDescription: "Sends an image from the nekos.life API.",
-      
+
       type: ApplicationCommandType.Chat,
       inputType: ApplicationCommandInputType.BuiltInText,
-      
+
       options: [
         {
           name: "type",
@@ -110,12 +73,14 @@ const CatgirlsPlugin: Plugin = {
 
           description: "Image type",
           displayDescription: "Image type",
-          
+
           type: ApplicationCommandOptionType.String,
           required: true,
-          choices: nekos_life_img_types.map(x => ({name: x, displayName: x, value: x})).concat(
-            nekos_life_nsfw_img_types.map(x => ({name: `[NSFW] ${x}`, displayName: `[NSFW] ${x}`, value: x}))
-          )
+          choices: nekos_life_img_types.map((x) => ({
+            name: x,
+            displayName: x,
+            value: x,
+          })),
         },
         {
           name: "whisper",
@@ -125,64 +90,72 @@ const CatgirlsPlugin: Plugin = {
           displayDescription: "Whisper the URL instead of sending it to chat",
 
           type: ApplicationCommandOptionType.Boolean,
-          required: false
-        }
+          required: false,
+        },
       ],
-    
+
       execute: async function (args, message) {
         const text = args[0].value;
-        const whisper = args[1]?.value ?? true
+        const whisper = args[1]?.value ?? true;
         const resp = await get(`https://nekos.life/api/v2/img/${text}`);
         if (resp.ok) {
           if (whisper) {
-            const { width, height } = await getImageSize(resp.body['url']);
+            const { width, height } = await getImageSize(resp.body["url"]);
             const embed = {
-              type: 'rich',
-              title: `${nekos_life_nsfw_img_types.indexOf(text) !== -1 ? "[NSFW] " : ""}random ${text} image`,
+              type: "rich",
+              title: `random ${text} image`,
               image: {
-                proxy_url: `https://external-content.duckduckgo.com/iu/?u=${resp.body['url']}`,
-                url: resp.body['url'],
+                proxy_url: `https://external-content.duckduckgo.com/iu/?u=${
+                  resp.body["url"]
+                }`,
+                url: resp.body["url"],
                 width: width,
-                height: height
+                height: height,
               },
               footer: {
-                text: "nekos.life"
+                text: "nekos.life",
               },
-              color: '0x45f5f5'
-            }
+              color: "0x45f5f5",
+            };
             const component = {
               type: 1,
               components: [{
                 type: 2,
                 style: 5,
                 label: "View image",
-                url: resp.body['url']
-              }]
-            }
-            sendReply(message.channel.id, {
-              embeds: [embed],
-              components: [component]
-            }, "nekos.life", "https://github.com/Nekos-life.png");
-          }
-          else {
+                url: resp.body["url"],
+              }],
+            };
+            sendReply(
+              message.channel.id,
+              {
+                embeds: [embed],
+                components: [component],
+              },
+              "nekos.life",
+              "https://github.com/Nekos-life.png",
+            );
+          } else {
             return {
-              content: resp.body['url']
+              content: resp.body["url"],
             };
           }
-        }
-        else {
+        } else {
           const channel = message.channel;
-          sendReply(channel.id, `An error happened making a request to https://nekos.life/api/v2/img/${text}`)
+          sendReply(
+            channel.id,
+            `An error happened making a request to https://nekos.life/api/v2/img/${text}`,
+          );
         }
-      }
-    }
+      },
+    };
 
     this.commands.push(catgirls_command);
   },
 
   onStop() {
     this.commands = [];
-  }
-}
+  },
+};
 
 registerPlugin(CatgirlsPlugin);
