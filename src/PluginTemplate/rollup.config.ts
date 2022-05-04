@@ -1,12 +1,8 @@
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-// @ts-ignore: IT EXISTS YOU MOTHERFUCKER
 import { Buffer } from "buffer";
-// @ts-ignore: YOU TOO
 import { mkdir, readFile, writeFile } from "fs";
-// @ts-ignore: YOU TOO
 import { basename } from "path";
-// @ts-ignore: AND YOU TOO
 import * as process from "process";
 import { defineConfig, Plugin } from "rollup";
 import esbuild from "rollup-plugin-esbuild";

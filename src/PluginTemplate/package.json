@@ -1,33 +1,21 @@
 {
-  "name": "timestamps",
-  "description": "Replaces plaintext timestamps with Discord's timestamps.",
-  "version": "1.1.3",
+  "name": "PluginTemplate",
+  "description": "Something funny goes here",
+  "version": "0.0.0",
   "author": {
     "name": "beerpsi"
   },
   "scripts": {
-    "build": "wireit"
-  },
-  "wireit": {
-    "build": {
-      "command": "rollup -c --configPlugin esbuild",
-      "files": ["src/**/*.ts"],
-      "output": ["dist/**"],
-      "packageLocks": ["package-lock.json"],
-      "clean": "if-file-deleted"
-    }
+    "build": "rollup -c --configPlugin esbuild"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.1.1",
     "@types/node": "^17.0.5",
-    "@typescript-eslint/eslint-plugin": "^5.8.1",
-    "@typescript-eslint/parser": "^5.8.1",
     "esbuild": "^0.14.9",
-    "eslint": "^8.5.0",
     "rollup": "^2.62.0",
     "rollup-plugin-esbuild": "^4.8.2",
-    "wireit": "^0.3.1"
+    "typescript": "^4.6.4"
   },
   "optionalDependencies": {
     "esbuild-darwin-64": "^0.14.21",
@@ -36,7 +24,6 @@
     "esbuild-windows-64": "^0.14.21"
   },
   "dependencies": {
-    "chrono-node": "^2.3.8",
     "enmity-api": "github:enmity-mod/enmity-api"
   }
 }
