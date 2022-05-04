@@ -1,0 +1,6 @@
+{
+    "name": "Timestamps",
+    "description": "Replaces plaintext timestamps with Discord's timestamps.",
+    "author": "beerpsi",
+    "version": "1.1.3"
+}

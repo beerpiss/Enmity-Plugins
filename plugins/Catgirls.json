@@ -1,0 +1,6 @@
+{
+    "name": "Catgirls",
+    "description": "Sends images from nekos.life API. ฅ•ω•ฅ\nUse this plugin at your own risk. The API returns NSFW images on some image types.",
+    "author": "beerpsi",
+    "version": "1.1.1"
+}

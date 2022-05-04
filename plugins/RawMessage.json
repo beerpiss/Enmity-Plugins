@@ -1,0 +1,6 @@
+{
+    "name": "RawMessage",
+    "description": "Sends a raw message with all Markdown escaped.",
+    "author": "beerpsi",
+    "version": "1.0.0"
+}
