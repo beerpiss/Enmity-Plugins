@@ -37,7 +37,7 @@ const OsuPlugin: Plugin = {
       execute: async function (args, message) {
         const text = args[0].value;
         const channel = message.channel;
-        const resp = await get(`https://api.obamabot.ml/v1/text/osu?user=${text}`);
+        const resp = await get(`https://api.obamabot.me/v1/text/osu?user=${text}`);
         if (resp.ok) {
           if (resp.body.length === 0) {
             sendReply(channel.id, `No osu! player found with the username ${text}`);
