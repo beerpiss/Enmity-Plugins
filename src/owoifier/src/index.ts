@@ -66,6 +66,19 @@ const OwO: Plugin = {
     
         return {
           content: owoify(text, level)
+            .replaceAll("_", "\\_")
+            .replaceAll("`", "\\`")
+            .replaceAll("*", "\\*")
+            .replaceAll("~", "\\~")
+            .replaceAll("#", "\\#")
+            .replaceAll("(", "\\(")
+            .replaceAll(")", "\\)")
+            .replaceAll("[", "\\[")
+            .replaceAll("]", "\\]")
+            .replaceAll("-", "\\-")
+            .replaceAll("<", "\\<")
+            .replaceAll(">", "\\>")
+            .replaceAll("|", "\\|")
         };
       }
     }
